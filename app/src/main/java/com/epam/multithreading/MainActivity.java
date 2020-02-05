@@ -3,25 +3,39 @@ package com.epam.multithreading;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private Button buttonFirst;
     private Button buttonSecond;
+    private Handler handler;
+    private static  final int TIME_OF_PROCESS = 10;
 
+    @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if(msg.what != 0) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    buttonFirst.setEnabled(true);
+                }
+            }
+        };
 
         buttonSecond = findViewById(R.id.button_second);
         buttonSecond.setOnClickListener(new View.OnClickListener() {
@@ -37,31 +51,21 @@ public class MainActivity extends AppCompatActivity {
 
     public void startProcess(View view) {
         progressBar = findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.VISIBLE);
-
         buttonFirst = findViewById(R.id.button_first);
+        progressBar.setVisibility(View.VISIBLE);
         buttonFirst.setEnabled(false);
 
-        new HardProcess().execute();
-    }
-
-    public class HardProcess extends AsyncTask<Void,Void,Void> {
-        @SuppressLint("WrongThread")
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                TimeUnit.SECONDS.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TimeUnit.SECONDS.sleep(TIME_OF_PROCESS);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                handler.sendEmptyMessage(TIME_OF_PROCESS);
             }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            progressBar.setVisibility(View.INVISIBLE);
-            buttonFirst.setEnabled(true);
-        }
+        });
+        thread.start();
     }
 }
