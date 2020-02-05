@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                if(msg.what != 0) {
+                if(msg.what > 0) {
                     progressBar.setVisibility(View.INVISIBLE);
                     buttonFirst.setEnabled(true);
                 }
