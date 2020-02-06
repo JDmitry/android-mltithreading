@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -16,9 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private Button buttonFirst;
-    private Button buttonSecond;
-    private Handler handler;
-    private static  final int TIME_OF_PROCESS = 10;
+    private Handler handler = new Handler();
 
     @SuppressLint("HandlerLeak")
     @Override
@@ -26,18 +23,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if(msg.what > 0) {
-                    progressBar.setVisibility(View.INVISIBLE);
-                    buttonFirst.setEnabled(true);
-                }
-            }
-        };
-
-        buttonSecond = findViewById(R.id.button_second);
+        Button buttonSecond = findViewById(R.id.button_second);
         buttonSecond.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,11 +45,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    TimeUnit.SECONDS.sleep(TIME_OF_PROCESS);
+                    TimeUnit.SECONDS.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                handler.sendEmptyMessage(TIME_OF_PROCESS);
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        buttonFirst.setEnabled(true);
+                    }
+                });
             }
         });
         thread.start();
