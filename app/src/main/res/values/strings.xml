@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Multithreading</string>
+    <string name="button_first">Button №1</string>
+    <string name="button_second">Button №2</string>
 </resources>
