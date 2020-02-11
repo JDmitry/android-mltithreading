@@ -15,15 +15,19 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private Button buttonFirst;
-    private Handler handler = new Handler();
+    private Button buttonSecond;
+    private Handler handler;
 
     @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        handler = new Handler();
+        progressBar = findViewById(R.id.progress_bar);
+        buttonFirst = findViewById(R.id.button_first);
 
-        Button buttonSecond = findViewById(R.id.button_second);
+        buttonSecond = findViewById(R.id.button_second);
         buttonSecond.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -36,8 +40,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startProcess(View view) {
-        progressBar = findViewById(R.id.progress_bar);
-        buttonFirst = findViewById(R.id.button_first);
         progressBar.setVisibility(View.VISIBLE);
         buttonFirst.setEnabled(false);
 
